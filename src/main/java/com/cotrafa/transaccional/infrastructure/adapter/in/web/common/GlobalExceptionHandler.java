@@ -22,8 +22,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Void>> handleRuntimeException(RuntimeException ex) {
-        // Handle specific runtime exceptions like "User not found" with 404 or 400 depending on logic
-        // For simplicity, we treat them as Bad Request if they are business logic errors
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(ex.getMessage()));
     }

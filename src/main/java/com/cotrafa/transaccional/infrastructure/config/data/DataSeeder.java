@@ -34,18 +34,21 @@ public class DataSeeder implements CommandLineRunner {
             User savedUser = loadUserPort.saveUser(user);
             System.out.println("Admin user created: admin / admin123");
 
-            // Create a default account for admin
             createAccount("10000001", "copeahorros", new BigDecimal("1000000"), savedUser);
         }
 
-        createUser("Mateo", "Arenas", "1001", "mateo", "mateo123", "20000001", "Ahorros Mateo", new BigDecimal("500000"));
-        createUser("Andres", "Castro", "1002", "andres", "andres123", "20000002", "Nomina Andres", new BigDecimal("1500000"));
-        createUser("Kelly", "Embale", "1003", "kelly", "kelly123", "20000003", "Vacaciones Kelly", new BigDecimal("3000000"));
-        createUser("Rafael", "Quintana", "1004", "rafael", "rafael123", "20000004", "Inversion Rafael", new BigDecimal("750000"));
+        createUser("Mateo", "Arenas", "1001", "mateo", "mateo123", "20000001", "Ahorros Mateo",
+                new BigDecimal("500000"));
+        createUser("Andres", "Castro", "1002", "andres", "andres123", "20000002", "Nomina Andres",
+                new BigDecimal("1500000"));
+        createUser("Kelly", "Embale", "1003", "kelly", "kelly123", "20000003", "Vacaciones Kelly",
+                new BigDecimal("3000000"));
+        createUser("Rafael", "Quintana", "1004", "rafael", "rafael123", "20000004", "Inversion Rafael",
+                new BigDecimal("750000"));
     }
 
-    private void createUser(String name, String lastName, String docNumber, String username, String password, 
-                            String accNumber, String accAlias, BigDecimal balance) {
+    private void createUser(String name, String lastName, String docNumber, String username, String password,
+            String accNumber, String accAlias, BigDecimal balance) {
         if (loadUserPort.loadUserByUsername(username).isEmpty()) {
             User user = User.builder()
                     .name(name)
@@ -57,7 +60,7 @@ public class DataSeeder implements CommandLineRunner {
                     .build();
             User savedUser = loadUserPort.saveUser(user);
             System.out.println("User created: " + username);
-            
+
             createAccount(accNumber, accAlias, balance, savedUser);
         }
     }

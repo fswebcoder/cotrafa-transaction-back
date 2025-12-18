@@ -18,6 +18,7 @@ public class Transaction {
     private Account sourceAccount;
     private Account destinationAccount;
     private BigDecimal amount;
+    private String cus;
     private TransactionStatus status;
     private LocalDateTime timestamp;
 }

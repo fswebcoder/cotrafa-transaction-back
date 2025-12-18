@@ -78,6 +78,7 @@ public class AccountPersistenceAdapter implements LoadAccountPort, UpdateAccount
                         transaction.getSourceAccount() != null ? mapToEntity(transaction.getSourceAccount()) : null)
                 .destinationAccount(mapToEntity(transaction.getDestinationAccount()))
                 .amount(transaction.getAmount())
+                .cus(transaction.getCus())
                 .status(transaction.getStatus())
                 .timestamp(transaction.getTimestamp())
                 .build();
@@ -89,6 +90,7 @@ public class AccountPersistenceAdapter implements LoadAccountPort, UpdateAccount
                 .sourceAccount(entity.getSourceAccount() != null ? mapToDomain(entity.getSourceAccount()) : null)
                 .destinationAccount(mapToDomain(entity.getDestinationAccount()))
                 .amount(entity.getAmount())
+                .cus(entity.getCus())
                 .status(entity.getStatus())
                 .timestamp(entity.getTimestamp())
                 .build();

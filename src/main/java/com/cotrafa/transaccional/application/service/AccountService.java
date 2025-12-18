@@ -4,6 +4,7 @@ import com.cotrafa.transaccional.domain.model.Account;
 import com.cotrafa.transaccional.domain.model.Transaction;
 import com.cotrafa.transaccional.domain.model.enums.TransactionStatus;
 import com.cotrafa.transaccional.domain.ports.in.DepositUseCase;
+import com.cotrafa.transaccional.domain.ports.in.GetUserAccountsUseCase;
 import com.cotrafa.transaccional.domain.ports.out.LoadAccountPort;
 import com.cotrafa.transaccional.domain.ports.out.SaveTransactionPort;
 import com.cotrafa.transaccional.domain.ports.out.UpdateAccountPort;
@@ -13,10 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AccountService implements DepositUseCase {
+public class AccountService implements DepositUseCase, GetUserAccountsUseCase {
 
     private final LoadAccountPort loadAccountPort;
     private final UpdateAccountPort updateAccountPort;
@@ -46,5 +48,10 @@ public class AccountService implements DepositUseCase {
                 .build();
 
         return saveTransactionPort.saveTransaction(transaction);
+    }
+
+    @Override
+    public List<Account> getUserAccounts(Long userId) {
+        return loadAccountPort.loadAccountsByUserId(userId);
     }
 }

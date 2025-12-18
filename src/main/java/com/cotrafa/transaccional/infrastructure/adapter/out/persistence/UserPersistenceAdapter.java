@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,14 @@ public class UserPersistenceAdapter implements LoadUserPort {
     @Transactional(readOnly = true)
     public Optional<User> loadUserByUsername(String username) {
         return userRepository.findByUsername(username).map(this::mapToDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<User> loadAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::mapToDomain)
+                .collect(Collectors.toList());
     }
 
     @Override

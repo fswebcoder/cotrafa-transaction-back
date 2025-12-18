@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -26,6 +28,13 @@ public class AccountPersistenceAdapter implements LoadAccountPort, UpdateAccount
     @Override
     public Optional<Account> loadAccountByNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber).map(this::mapToDomain);
+    }
+
+    @Override
+    public List<Account> loadAccountsByUserId(Long userId) {
+        return accountRepository.findByUserId(userId).stream()
+                .map(this::mapToDomain)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -65,7 +74,8 @@ public class AccountPersistenceAdapter implements LoadAccountPort, UpdateAccount
     private TransactionEntity mapToTransactionEntity(Transaction transaction) {
         return TransactionEntity.builder()
                 .id(transaction.getId())
-                .sourceAccount(transaction.getSourceAccount() != null ? mapToEntity(transaction.getSourceAccount()) : null)
+                .sourceAccount(
+                        transaction.getSourceAccount() != null ? mapToEntity(transaction.getSourceAccount()) : null)
                 .destinationAccount(mapToEntity(transaction.getDestinationAccount()))
                 .amount(transaction.getAmount())
                 .status(transaction.getStatus())

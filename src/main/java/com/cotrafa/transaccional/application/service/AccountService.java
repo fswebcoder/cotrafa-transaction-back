@@ -2,11 +2,15 @@ package com.cotrafa.transaccional.application.service;
 
 import com.cotrafa.transaccional.domain.model.Account;
 import com.cotrafa.transaccional.domain.model.Transaction;
+import com.cotrafa.transaccional.domain.model.PagedResult;
+import com.cotrafa.transaccional.domain.model.TransactionFilter;
 import com.cotrafa.transaccional.domain.model.enums.TransactionStatus;
 import com.cotrafa.transaccional.domain.ports.in.DepositUseCase;
 import com.cotrafa.transaccional.domain.ports.in.GetUserAccountsUseCase;
+import com.cotrafa.transaccional.domain.ports.in.GetUserTransactionsUseCase;
 import com.cotrafa.transaccional.domain.ports.in.TransferUseCase;
 import com.cotrafa.transaccional.domain.ports.out.LoadAccountPort;
+import com.cotrafa.transaccional.domain.ports.out.LoadTransactionPort;
 import com.cotrafa.transaccional.domain.ports.out.SaveTransactionPort;
 import com.cotrafa.transaccional.domain.ports.out.UpdateAccountPort;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +23,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AccountService implements DepositUseCase, GetUserAccountsUseCase, TransferUseCase {
+public class AccountService
+        implements DepositUseCase, GetUserAccountsUseCase, TransferUseCase, GetUserTransactionsUseCase {
 
     private final LoadAccountPort loadAccountPort;
     private final UpdateAccountPort updateAccountPort;
     private final SaveTransactionPort saveTransactionPort;
+    private final LoadTransactionPort loadTransactionPort;
 
     @Override
     @Transactional
@@ -96,5 +102,10 @@ public class AccountService implements DepositUseCase, GetUserAccountsUseCase, T
                 .build();
 
         return saveTransactionPort.saveTransaction(transaction);
+    }
+
+    @Override
+    public PagedResult<Transaction> getUserTransactions(Long userId, int page, int size, TransactionFilter filter) {
+        return loadTransactionPort.loadTransactionsByUserId(userId, page, size, filter);
     }
 }

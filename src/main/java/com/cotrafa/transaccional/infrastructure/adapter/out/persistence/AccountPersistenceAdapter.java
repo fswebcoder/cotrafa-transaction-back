@@ -1,9 +1,16 @@
 package com.cotrafa.transaccional.infrastructure.adapter.out.persistence;
 
+import com.cotrafa.transaccional.domain.model.PagedResult;
+import com.cotrafa.transaccional.domain.model.TransactionFilter;
+import com.cotrafa.transaccional.infrastructure.adapter.out.persistence.specification.TransactionSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import com.cotrafa.transaccional.domain.model.Account;
 import com.cotrafa.transaccional.domain.model.Transaction;
 import com.cotrafa.transaccional.domain.model.User;
 import com.cotrafa.transaccional.domain.ports.out.LoadAccountPort;
+import com.cotrafa.transaccional.domain.ports.out.LoadTransactionPort;
 import com.cotrafa.transaccional.domain.ports.out.SaveTransactionPort;
 import com.cotrafa.transaccional.domain.ports.out.UpdateAccountPort;
 import com.cotrafa.transaccional.infrastructure.adapter.out.persistence.entity.AccountEntity;
@@ -20,10 +27,33 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class AccountPersistenceAdapter implements LoadAccountPort, UpdateAccountPort, SaveTransactionPort {
+public class AccountPersistenceAdapter
+        implements LoadAccountPort, UpdateAccountPort, SaveTransactionPort, LoadTransactionPort {
 
     private final SpringDataAccountRepository accountRepository;
     private final SpringDataTransactionRepository transactionRepository;
+
+    @Override
+    public PagedResult<Transaction> loadTransactionsByUserId(Long userId, int page, int size,
+            TransactionFilter filter) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<TransactionEntity> transactionPage = transactionRepository.findAll(
+                TransactionSpecification.withFilter(userId, filter), pageable);
+
+        List<Transaction> content = transactionPage.getContent().stream()
+                .map(this::mapToTransactionDomain)
+                .collect(Collectors.toList());
+
+        return PagedResult.<Transaction>builder()
+                .content(content)
+                .pageNumber(transactionPage.getNumber())
+                .pageSize(transactionPage.getSize())
+                .totalElements(transactionPage.getTotalElements())
+                .totalPages(transactionPage.getTotalPages())
+                .last(transactionPage.isLast())
+                .first(transactionPage.isFirst())
+                .build();
+    }
 
     @Override
     public Optional<Account> loadAccountByNumber(String accountNumber) {

@@ -8,6 +8,7 @@ import com.cotrafa.transaccional.domain.ports.in.GetUserAccountsUseCase;
 import com.cotrafa.transaccional.domain.ports.in.GetUserTransactionsUseCase;
 import com.cotrafa.transaccional.domain.ports.in.TransferUseCase;
 import com.cotrafa.transaccional.infrastructure.adapter.in.web.common.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -30,14 +31,14 @@ public class AccountController {
 
     @PostMapping("/deposit")
     public ResponseEntity<ApiResponse<DepositUseCase.DepositRequest>> deposit(
-            @RequestBody DepositUseCase.DepositRequest request) {
+            @Valid @RequestBody DepositUseCase.DepositRequest request) {
         depositUseCase.deposit(request);
         return ResponseEntity.ok(ApiResponse.success(request, "Deposit successful"));
     }
 
     @PostMapping("/transfer")
     public ResponseEntity<ApiResponse<TransferUseCase.TransferRequest>> transfer(
-            @RequestBody TransferUseCase.TransferRequest request) {
+            @Valid @RequestBody TransferUseCase.TransferRequest request) {
         transferUseCase.transfer(request);
         return ResponseEntity.ok(ApiResponse.success(request, "Transfer successful"));
     }

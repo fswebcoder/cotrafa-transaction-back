@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +35,14 @@ public class AccountService
     @Override
     @Transactional
     public Transaction deposit(DepositRequest request) {
+        if (request.getAmount() == null) {
+            throw new IllegalArgumentException("Deposit amount is required");
+        }
         if (request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Deposit amount must be greater than zero");
+        }
+        if (request.getAccountNumber() == null || request.getAccountNumber().isBlank()) {
+            throw new IllegalArgumentException("Account number is required");
         }
 
         Account account = loadAccountPort.loadAccountByNumber(request.getAccountNumber())
@@ -50,6 +57,7 @@ public class AccountService
                 .sourceAccount(null)
                 .destinationAccount(account)
                 .amount(request.getAmount())
+                .cus("DEP-" + UUID.randomUUID())
                 .status(TransactionStatus.SUCCESS)
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -65,8 +73,17 @@ public class AccountService
     @Override
     @Transactional
     public Transaction transfer(TransferRequest request) {
+        if (request.getAmount() == null) {
+            throw new IllegalArgumentException("Transfer amount is required");
+        }
         if (request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Transfer amount must be greater than zero");
+        }
+        if (request.getSourceAccountNumber() == null || request.getSourceAccountNumber().isBlank()) {
+            throw new IllegalArgumentException("Source account number is required");
+        }
+        if (request.getDestinationAccountNumber() == null || request.getDestinationAccountNumber().isBlank()) {
+            throw new IllegalArgumentException("Destination account number is required");
         }
 
         if (request.getSourceAccountNumber().equals(request.getDestinationAccountNumber())) {
@@ -96,7 +113,8 @@ public class AccountService
                 .sourceAccount(sourceAccount)
                 .destinationAccount(destinationAccount)
                 .amount(request.getAmount())
-                .cus(request.getCus())
+                .cus((request.getCus() == null || request.getCus().isBlank()) ? "TRF-" + UUID.randomUUID()
+                        : request.getCus())
                 .status(TransactionStatus.SUCCESS)
                 .timestamp(LocalDateTime.now())
                 .build();

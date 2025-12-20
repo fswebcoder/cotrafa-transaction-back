@@ -17,7 +17,6 @@ public class TransactionSpecification {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // User filter (source or destination account belongs to user)
             Join<TransactionEntity, AccountEntity> sourceAccount = root.join("sourceAccount", JoinType.LEFT);
             Join<TransactionEntity, AccountEntity> destinationAccount = root.join("destinationAccount", JoinType.LEFT);
 
@@ -36,7 +35,6 @@ public class TransactionSpecification {
                 predicates.add(cb.or(userIsSource, userIsDestination));
             }
 
-            // Date range
             if (filter.getStartDate() != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("timestamp"), filter.getStartDate().atStartOfDay()));
             }
@@ -44,7 +42,6 @@ public class TransactionSpecification {
                 predicates.add(cb.lessThanOrEqualTo(root.get("timestamp"), filter.getEndDate().atTime(23, 59, 59)));
             }
 
-            // Amount range
             if (filter.getMinAmount() != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("amount"), filter.getMinAmount()));
             }

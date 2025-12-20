@@ -87,7 +87,7 @@ public class AccountPersistenceAdapter
                 .accountNumber(entity.getAccountNumber())
                 .alias(entity.getAlias())
                 .balance(entity.getBalance())
-                .user(User.builder().id(entity.getUser().getId()).build()) // Simplified User
+                .user(User.builder().id(entity.getUser().getId()).build())
                 .build();
     }
 
@@ -97,7 +97,7 @@ public class AccountPersistenceAdapter
                 .accountNumber(account.getAccountNumber())
                 .alias(account.getAlias())
                 .balance(account.getBalance())
-                .user(UserEntity.builder().id(account.getUser().getId()).build()) // Simplified User reference
+                .user(UserEntity.builder().id(account.getUser().getId()).build())
                 .build();
     }
 

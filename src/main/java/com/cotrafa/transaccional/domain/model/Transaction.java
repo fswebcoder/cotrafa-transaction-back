@@ -17,6 +17,7 @@ public class Transaction {
     private Long id;
     private Account sourceAccount;
     private Account destinationAccount;
+    private String movement;
     private BigDecimal amount;
     private String cus;
     private TransactionStatus status;

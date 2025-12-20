@@ -41,7 +41,11 @@ public class AccountPersistenceAdapter
                 TransactionSpecification.withFilter(userId, filter), pageable);
 
         List<Transaction> content = transactionPage.getContent().stream()
-                .map(this::mapToTransactionDomain)
+                .map(entity -> {
+                    Transaction transaction = mapToTransactionDomain(entity);
+                    transaction.setMovement(calculateMovement(entity, userId));
+                    return transaction;
+                })
                 .collect(Collectors.toList());
 
         return PagedResult.<Transaction>builder()
@@ -124,5 +128,25 @@ public class AccountPersistenceAdapter
                 .status(entity.getStatus())
                 .timestamp(entity.getTimestamp())
                 .build();
+    }
+
+    private String calculateMovement(TransactionEntity entity, Long userId) {
+        boolean userIsSource = entity.getSourceAccount() != null
+                && entity.getSourceAccount().getUser() != null
+                && userId.equals(entity.getSourceAccount().getUser().getId());
+        boolean userIsDestination = entity.getDestinationAccount() != null
+                && entity.getDestinationAccount().getUser() != null
+                && userId.equals(entity.getDestinationAccount().getUser().getId());
+
+        if (userIsSource && userIsDestination) {
+            return "INTERNA";
+        }
+        if (userIsSource) {
+            return "SALIDA";
+        }
+        if (userIsDestination) {
+            return "ENTRADA";
+        }
+        return null;
     }
 }
